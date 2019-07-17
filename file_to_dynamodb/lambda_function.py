@@ -18,19 +18,14 @@ def lambda_handler(event, context):
     size = event["Records"][0]["s3"]["object"]["size"]
 
     file_object = s3.get_object(Bucket=s3_bucket_name, Key=file_name)
-    body = file_object['Body'].read().split(b'\n')
-
-    file_content = ""
-
-    for line in body:
-        file_content += "\n" + line.decode()
+    body = file_object['Body'].read().decode('utf-8')
 
     item = {
         "fileName": {
             "S": file_name,
         },
         "fileContent": {
-            "S": file_content
+            "S": body
         },
         "fileSize": {
             "N": str(size)
