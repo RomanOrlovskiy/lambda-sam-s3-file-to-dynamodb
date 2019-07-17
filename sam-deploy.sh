@@ -17,13 +17,6 @@ stack_name="s3-dynamodb"
 
 set -x
 
-if [ -d "tests" ]; then
-    echo "Running tests ..."
-    python3 -m pytest tests/ -v || exit $?
-else
-    echo "'tests' directory not found, skipping tests"
-fi
-
 echo "Building ..."
 sam build || exit $?
 
