@@ -5,8 +5,8 @@ pipeline {
         bucketName='rorlovskyi-lambda-sam-s3-file-to-dynamodb'
         stackName="s3-dynamodb"
         lambdaName="FileToDynamoDB"
-        testBucket="rorlovskyi-user-data-scripts"
-        testFile="testfile.txt"
+        testBucket="rorlovskyi-temp-files"
+        testFile="event.json"
     }
 
     stages {
