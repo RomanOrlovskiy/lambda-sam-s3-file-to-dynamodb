@@ -32,6 +32,8 @@ def lambda_handler(event, context):
         }
     }
 
+    print("test")
+    
     return dynamodb.put_item(
         TableName=dynamodb_table_name,
         Item=item
