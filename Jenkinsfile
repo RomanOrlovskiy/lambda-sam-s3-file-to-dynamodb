@@ -23,7 +23,8 @@ pipeline {
         stage ('Tests') {
             steps {
                 script{
-                  sh "sam local generate-event s3 put ${testBucket} --bucket --key ${testFile} | sam local invoke ${lambdaName}"                  
+                  sh "sam local invoke ${lambdaName} -e ${testFile}"
+                  //sh "sam local generate-event s3 put ${testBucket} --bucket --key ${testFile} | sam local invoke ${lambdaName}"                  
               }
           }
         }
