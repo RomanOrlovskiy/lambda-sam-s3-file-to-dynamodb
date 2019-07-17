@@ -1,0 +1,47 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Globals:
+  Function:
+    AutoPublishAlias: live
+    Timeout: 5
+Outputs:
+  HelloWorldFunction:
+    Description: Lambda Function ARN
+    Value:
+      Fn::GetAtt:
+      - FileToDynamoDB
+      - Arn
+Resources:
+  FileToDynamoDB:
+    Properties:
+      CodeUri: s3://rorlovskyi-lambda-sam-s3-file-to-dynamodb/63396cb67980e08e284e4f26fae02b99
+      Events:
+        S3Upload:
+          Properties:
+            Bucket:
+              Ref: S3Bucket
+            Events: s3:ObjectCreated:*
+          Type: S3
+      Handler: lambda_function.lambda_handler
+      Policies:
+      - AWSLambdaExecute
+      - Statement:
+        - Action:
+          - s3:GetObject
+          - s3:GetObjectACL
+          Effect: Allow
+          Resource: arn:aws:s3:::rorlovskyi-temp-files/*
+        Version: '2012-10-17'
+      - Statement:
+        - Action:
+          - dynamodb:PutItem
+          - dynamodb:UpdateItem
+          Effect: Allow
+          Resource: arn:aws:dynamodb:us-west-2:414831080620:table/test-s3-file-contents
+        Version: '2012-10-17'
+      Runtime: python3.6
+    Type: AWS::Serverless::Function
+  S3Bucket:
+    Properties:
+      BucketName: rorlovskyi-temp-files
+    Type: AWS::S3::Bucket
+Transform: AWS::Serverless-2016-10-31

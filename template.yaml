@@ -20,7 +20,7 @@ Resources:
               Action:
                 - s3:GetObject
                 - s3:GetObjectACL
-              Resource: 'arn:aws:s3:::rorlovskyi-user-data-scripts/*'
+              Resource: 'arn:aws:s3:::rorlovskyi-temp-files/*'
         - Version: '2012-10-17' # Policy Document
           Statement:
             - Effect: Allow
@@ -32,8 +32,12 @@ Resources:
         S3Upload:
           Type: S3
           Properties:
-            Bucket: rorlovskyi-user-data-scripts
+            Bucket: !Ref S3Bucket
             Events: s3:ObjectCreated:*
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: rorlovskyi-temp-files
 
 Outputs:
   HelloWorldFunction:

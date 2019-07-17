@@ -3,7 +3,7 @@ import logging
 import boto3
 
 dynamodb_table_name = "test-s3-file-contents"
-s3_bucket_name = "rorlovskyi-user-data-scripts"
+s3_bucket_name = "rorlovskyi-temp-files"
 
 
 def lambda_handler(event, context):
