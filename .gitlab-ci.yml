@@ -1,0 +1,61 @@
+# image: docker:latest
+
+# services:
+#   - docker:dind
+
+# before_script:
+#   - docker info
+
+# build:
+#   stage: build
+#   script:
+#     - docker ps -a
+
+variables:
+    S3_BUCKET: rorlovskyi-lambda-sam-s3-file-to-dynamodb
+    AWS_DEFAULT_REGION: us-west-2
+    CFN_STACK_NAME: s3-dynamodb
+
+stages:
+  - build
+  - test
+  - package
+  - deploy
+
+build:
+  image: python:3.6
+  stage: build
+  script:
+    - echo "Building"
+    - pip3 install awscli aws-sam-cli
+    - sam build
+  artifacts:
+    paths:
+      - .aws-sam/build
+
+test:
+  image: python:3.6
+  stage: test
+  script:
+    - echo "Testing"
+    - pip3 install awscli aws-sam-cli pytest pytest-mock 
+
+package:
+  image: python:3.6
+  stage: package
+  script:
+    - pip3 install awscli aws-sam-cli
+    - sam package --output-template-file packaged.yaml --s3-bucket $S3_BUCKET
+  artifacts:
+    paths:
+      - .aws-sam/build
+
+deploy:
+  image: python:3.6
+  stage: deploy
+  script:
+    - pip3 install awscli aws-sam-cli
+    - sam deploy --template-file packaged.yaml --stack-name $CFN_STACK_NAME --capabilities CAPABILITY_IAM
+  # artifacts:
+  #   paths:
+  #     - ./template-export.yml
