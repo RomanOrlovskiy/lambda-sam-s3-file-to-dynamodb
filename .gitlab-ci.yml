@@ -11,6 +11,8 @@
 #   script:
 #     - docker ps -a
 
+#test
+
 variables:
     S3_BUCKET: rorlovskyi-lambda-sam-s3-file-to-dynamodb
     AWS_DEFAULT_REGION: us-west-2
