@@ -20,44 +20,48 @@ variables:
 
 stages:
   - build
-  - test
-  - package
-  - deploy
+  # - package
+  # - deploy
 
 build:
   image: python:3.6
   stage: build
   script:
+    - echo "Preparing"
+    - pip install awscli aws-sam-cli --upgrade
     - echo "Building"
-    - pip3 install awscli aws-sam-cli
     - sam build
-  artifacts:
-    paths:
-      - .aws-sam/build
-
-test:
-  image: python:3.6
-  stage: test
-  script:
-    - echo "Testing"
-    - pip3 install awscli aws-sam-cli pytest pytest-mock 
-
-package:
-  image: python:3.6
-  stage: package
-  script:
-    - pip3 install awscli aws-sam-cli
+    - echo "Packaging"
     - sam package --output-template-file packaged.yaml --s3-bucket $S3_BUCKET
+    - echo "Deploying"
+    - sam deploy --template-file packaged.yaml --stack-name $CFN_STACK_NAME --capabilities CAPABILITY_IAM
   artifacts:
     paths:
       - .aws-sam/build
 
-deploy:
-  image: python:3.6
-  stage: deploy
-  script:
-    - pip3 install awscli aws-sam-cli
-    - sam deploy --template-file packaged.yaml --stack-name $CFN_STACK_NAME --capabilities CAPABILITY_IAM
-  # artifacts:
-  #   paths:
-  #     - ./template-export.yml
+# test:
+#   image: python:3.6
+#   stage: test
+#   script:
+#     - echo "Testing"
+#     - pip3 install awscli aws-sam-cli pytest pytest-mock 
+
+# package:
+#   image: python:3.6
+#   stage: package
+#   script:
+#     - pip3 install awscli aws-sam-cli
+#     - sam package --output-template-file packaged.yaml --s3-bucket $S3_BUCKET
+#   artifacts:
+#     paths:
+#       - .aws-sam/build
+
+# deploy:
+#   image: python:3.6
+#   stage: deploy
+#   script:
+#     - pip3 install awscli aws-sam-cli
+#     - sam deploy --template-file packaged.yaml --stack-name $CFN_STACK_NAME --capabilities CAPABILITY_IAM
+#   # artifacts:
+#   #   paths:
+#   #     - ./template-export.yml
