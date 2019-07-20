@@ -20,21 +20,47 @@ def lambda_handler(event, context):
     file_object = s3.get_object(Bucket=s3_bucket_name, Key=file_name)
     body = file_object['Body'].read().decode('utf-8')
 
-    item = {
-        "fileName": {
-            "S": file_name,
-        },
-        "fileContent": {
-            "S": body
-        },
-        "fileSize": {
-            "N": str(size)
-        }
-    }
+    rows = body.split()
 
-    print("test 123")
+    return rows
 
-    return dynamodb.put_item(
-        TableName=dynamodb_table_name,
-        Item=item
-    )
+    # write records to dynamo db
+    # tokens = csv.reader(csv_file, delimiter=args.delimiter)
+    # # read first line in file which contains dynamo db field names
+    # header = tokens.next();
+    # # read second line in file which contains dynamo db field data types
+    # headerFormat = tokens.next();
+    # # rest of file contain new records
+    # for token in tokens:
+    #     item = {}
+    #     for i, val in enumerate(token):
+    #         if val:
+    #             key = header[i]
+    #             if headerFormat[i] == 'int':
+    #                 val = int(val)
+    #             item[key] = val
+    #     print(item)
+    #     table.put_item(Item=item)
+    #
+    #     time.sleep(1 / args.writeRate)  # to accomodate max write provisioned capacity for table
+    #
+    # #Parse contents of the file from csv to JSON
+    #
+    # item = {
+    #     "fileName": {
+    #         "S": file_name,
+    #     },
+    #     "fileContent": {
+    #         "S": body
+    #     },
+    #     "fileSize": {
+    #         "N": str(size)
+    #     }
+    # }
+    #
+    # print("test 123")
+    #
+    # return dynamodb.put_item(
+    #     TableName=dynamodb_table_name,
+    #     Item=item
+    # )

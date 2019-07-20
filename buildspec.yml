@@ -1,0 +1,29 @@
+version: 0.2
+
+env:
+  variables:
+    S3_BUCKET: rorlovskyi-lambda-sam-s3-file-to-dynamodb
+    AWS_DEFAULT_REGION: us-west-2
+    CFN_STACK_NAME: s3-dynamodb
+  parameter-store:
+    TEST_PARAMETER: /test/hello_world
+
+phases:
+  install:
+    commands:
+      - echo "Preparing"
+      - pip install awscli aws-sam-cli --upgrade
+      - echo $TEST_PARAMETER
+    finally:
+      - echo This always runs even if the update or install command fails 
+  build:
+    commands:
+      - echo "Building"
+      - sam build    
+  post_build:
+    commands:
+      - echo "Packaging"
+      - sam package --output-template-file packaged.yaml --s3-bucket $S3_BUCKET
+      - echo "Deploying"
+      - sam deploy --template-file packaged.yaml --stack-name $CFN_STACK_NAME --capabilities CAPABILITY_IAM
+      - echo Build completed on `date`
